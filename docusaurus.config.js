@@ -9,8 +9,8 @@ const config = {
   tagline: "Networking module (RemoteEvent + RemoteFunction) with rate + byte limiting",
   favicon: "img/favicon.svg",
 
-  url: "https://example.com",
-  baseUrl: "/",
+  url: "https://neonifieddev.github.io",
+  baseUrl: "/Sync/",
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",

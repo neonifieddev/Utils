@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# Sync
-Roblox Networker Module
-=======
 # Sync Networker
 
 Lightweight RemoteEvent/RemoteFunction wrapper with **rate limiting** and **payload byte limiting**, designed to be required by both server and client.
@@ -30,4 +26,3 @@ To preview locally (no build step), from the repo root run one of:
   - `python -m http.server 4173 --directory site`
 - Node (if you have it):
   - `npx --yes http-server site -p 4173`
->>>>>>> 34b37a3 (Add Sync docs website)
