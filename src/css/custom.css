@@ -16,3 +16,14 @@
   margin-top: 1.75rem;
 }
 
+/* Avoid "double scrollbars" on desktop (page scroll + TOC scroll).
+   Let the page handle scrolling instead of the TOC having its own scroll container. */
+.theme-doc-toc-desktop {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.theme-doc-toc-desktop .table-of-contents {
+  max-height: none !important;
+  overflow: visible !important;
+}
