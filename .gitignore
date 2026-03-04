@@ -1,0 +1,14 @@
+# deps / build artifacts
+node_modules/
+build/
+.docusaurus/
+.cache/
+
+# local env
+.env
+.env.*
+
+# OS / editor
+Thumbs.db
+.DS_Store
+

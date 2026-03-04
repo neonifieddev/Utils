@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sync API</title>
+    <meta name="description" content="Sync API Documentation" />
+    <link rel="stylesheet" href="../../assets/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="../../">
+          <span>Sync</span>
+          <span class="badge">API</span>
+        </a>
+        <nav class="navlinks">
+          <a href="../../">Intro</a>
+          <a href="https://sleitnick.github.io/RbxUtil/api/Net/" target="_blank" rel="noreferrer">RbxUtil Net</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar panel">
+        <div class="sidebar-inner" data-sidebar>
+          <h3>Docs</h3>
+          <div class="sideitem"><a href="../../">Intro</a></div>
+          <h3>API</h3>
+          <div class="sideitem"><a class="indent" href="./">Sync</a></div>
+        </div>
+      </aside>
+
+      <article class="content panel" data-content>
+        <h1>Sync</h1>
+        <p class="subtitle">
+          Basic networking module for creating and handling static <code>RemoteEvent</code>s and
+          <code>RemoteFunction</code>s (paired per endpoint name), with <strong>rate limiting</strong> and
+          <strong>payload byte limiting</strong>. Each endpoint also includes an <code>UnreliableRemoteEvent</code> for
+          high-frequency state.
+        </p>
+
+        <div class="callout">
+          <strong>Examples only:</strong> this page uses generic examples (no app-specific remote registries), inspired
+          by the structure of RbxUtil’s <a href="https://sleitnick.github.io/RbxUtil/api/Net/" target="_blank" rel="noreferrer">Net</a> docs.
+        </div>
+
+        <h2>One shared remote folder</h2>
+        <p>
+          You only need <strong>one copy</strong> of the Sync module required by both server and client. All endpoints share:
+          <code>ReplicatedStorage.Remotes</code>.
+        </p>
+        <p>For each <code>Sync:Create("X")</code>:</p>
+        <ul>
+          <li><strong>RemoteEvent</strong>: <code>ReplicatedStorage.Remotes.X</code></li>
+          <li><strong>UnreliableRemoteEvent</strong>: <code>ReplicatedStorage.Remotes.XUnreliable</code></li>
+          <li><strong>RemoteFunction</strong>: <code>ReplicatedStorage.Remotes.XFunction</code></li>
+        </ul>
+
+        <h2>Quick example</h2>
+        <pre><code class="language-lua">local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Sync = require(ReplicatedStorage.Packages.Sync)
+
+local PointsChanged = Sync:Create("PointsChanged")
+  :SetRateLimit(10)
+  :SetByteLimit(1024)
+  :SetMode(Sync.Modes.Burst)</code></pre>
+
+        <h3>Client</h3>
+        <pre><code class="language-lua">PointsChanged:Connect(function(points)
+  print("Points", points)
+end)</code></pre>
+
+        <h3>Server</h3>
+        <pre><code class="language-lua">PointsChanged:FireAll(10)</code></pre>
+
+        <h2>Recommended pattern: return a table of endpoints</h2>
+        <p>
+          A common pattern is a shared ModuleScript (required by both server + client) that exports a table of Sync
+          endpoints.
+        </p>
+
+        <pre><code class="language-lua">-- ReplicatedStorage/Shared/Remotes.luau
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Sync = require(ReplicatedStorage.Packages.Sync)
+
+return {
+  Test = {
+    Ping = Sync:Create("Test.Ping"):SetRateLimit(2):SetByteLimit(64),
+  },
+
+  Data = {
+    Get = Sync:Create("Data.Get"):SetRateLimit(10):SetByteLimit(2048):SetMode(Sync.Modes.Burst),
+  },
+
+  Movement = {
+    -- Same endpoint can be fired reliably or unreliably.
+    Position = Sync:Create("Movement.Position"):SetRateLimit(30):SetByteLimit(512),
+  },
+}</code></pre>
+
+        <h3>Server usage</h3>
+        <pre><code class="language-lua">local Remotes = require(ReplicatedStorage.Shared.Remotes)
+
+Remotes.Test.Ping:Connect(function(player, msg)
+  print(player.Name, msg)
+end)
+
+Remotes.Data.Get:OnInvoke(function(player, key)
+  return 123
+end)</code></pre>
+
+        <h3>Client usage</h3>
+        <pre><code class="language-lua">local Remotes = require(ReplicatedStorage.Shared.Remotes)
+
+Remotes.Test.Ping:Fire("hello")
+local n = Remotes.Data.Get:InvokeServer("Cash")</code></pre>
+
+        <h2>Functions</h2>
+
+        <h3>Create</h3>
+        <p><code>Sync:Create(name: string) -&gt; Sync</code></p>
+        <p>Creates (or returns) a Sync endpoint.</p>
+        <ul>
+          <li>
+            <strong>Server</strong>: creates the endpoint remotes under <code>ReplicatedStorage.Remotes</code>:
+            <code>RemoteEvent</code>, <code>UnreliableRemoteEvent</code>, and <code>RemoteFunction</code>.
+          </li>
+          <li><strong>Client</strong>: waits up to 10 seconds for the folder/remotes to exist.</li>
+          <li><strong>Duplicate name</strong>: warns and returns the existing instance.</li>
+        </ul>
+        <pre><code>local sync = Sync:Create("Test.Ping")</code></pre>
+
+        <h3>Init</h3>
+        <p><code>Sync:Init() -&gt; ()</code></p>
+        <p>One-time module initializer. <code>Sync:Create()</code> calls this automatically.</p>
+
+        <h3>InitServer</h3>
+        <p><code>Sync:InitServer() -&gt; ()</code> <span class="badge">Server</span></p>
+
+        <h3>InitClient</h3>
+        <p><code>Sync:InitClient() -&gt; ()</code> <span class="badge">Client</span></p>
+
+        <h2>Modes</h2>
+        <pre><code class="language-lua">Sync.Modes = {
+  Throttle = "Throttle",
+  Burst = "Burst",
+}</code></pre>
+        <ul>
+          <li><strong>Throttle</strong>: minimum interval between calls (<code>1 / rateLimit</code> seconds).</li>
+          <li><strong>Burst</strong>: up to <code>rateLimit</code> calls per second.</li>
+        </ul>
+
+        <h2>Instance Methods</h2>
+
+        <h3>Connect</h3>
+        <p><code>sync:Connect(callback: (...any) -&gt; ()) -&gt; { Disconnect: () -&gt; () }?</code></p>
+        <p>
+          Connects a handler to the endpoint’s events. For simplicity, <code>:Connect()</code> receives both reliable
+          and unreliable event traffic.
+        </p>
+        <pre><code class="language-lua">-- Client
+sync:Connect(function(...)
+  print("Got", ...)
+end)
+
+-- Server
+sync:Connect(function(player, ...)
+  print("From", player.Name, ...)
+end)</code></pre>
+
+        <h3>OnInvoke</h3>
+        <p><code>sync:OnInvoke(callback: (...any) -&gt; ...any) -&gt; { Disconnect: () -&gt; () }?</code></p>
+        <pre><code class="language-lua">-- Server
+sync:OnInvoke(function(player, request)
+  return { ok = true }
+end)</code></pre>
+
+        <h3>Fire</h3>
+        <p><code>sync:Fire(...any) -&gt; ()</code> <span class="badge">Client</span></p>
+        <p>Fires client → server (drops if rate-limited or byte-limited).</p>
+        <pre><code class="language-lua">sync:Fire("hello")</code></pre>
+
+        <h3>FireUnreliable</h3>
+        <p><code>sync:FireUnreliable(...any) -&gt; ()</code> <span class="badge">Client</span></p>
+        <p>Fires client → server using <code>UnreliableRemoteEvent</code> (drops are expected; still rate/byte limited).</p>
+        <pre><code class="language-lua">sync:FireUnreliable(workspace.CurrentCamera.CFrame)</code></pre>
+
+        <h3>InvokeServer</h3>
+        <p><code>sync:InvokeServer(...any) -&gt; ...any</code> <span class="badge">Client</span></p>
+        <pre><code class="language-lua">local result = sync:InvokeServer("GetData")</code></pre>
+
+        <h3>FireAll</h3>
+        <p><code>sync:FireAll(...any) -&gt; ()</code> <span class="badge">Server</span></p>
+        <pre><code class="language-lua">sync:FireAll("announcement")</code></pre>
+
+        <h3>FireAllUnreliable</h3>
+        <p><code>sync:FireAllUnreliable(...any) -&gt; ()</code> <span class="badge">Server</span></p>
+        <p>Fires to all players using <code>UnreliableRemoteEvent</code> (per-player rate limiting; drops expected).</p>
+        <pre><code class="language-lua">sync:FireAllUnreliable(CFrame.new())</code></pre>
+
+        <h3>FireClient</h3>
+        <p><code>sync:FireClient(player: Player, ...any) -&gt; ()</code> <span class="badge">Server</span></p>
+        <pre><code class="language-lua">sync:FireClient(player, "hello")</code></pre>
+
+        <h3>FireClientUnreliable</h3>
+        <p><code>sync:FireClientUnreliable(player: Player, ...any) -&gt; ()</code> <span class="badge">Server</span></p>
+        <pre><code class="language-lua">sync:FireClientUnreliable(player, CFrame.new())</code></pre>
+
+        <h3>FireExcept</h3>
+        <p><code>sync:FireExcept(players: { Player }, ...any) -&gt; ()</code> <span class="badge">Server</span></p>
+        <pre><code class="language-lua">sync:FireExcept({playerA, playerB}, "everyone else")</code></pre>
+
+        <h3>FireExceptUnreliable</h3>
+        <p><code>sync:FireExceptUnreliable(players: { Player }, ...any) -&gt; ()</code> <span class="badge">Server</span></p>
+        <pre><code class="language-lua">sync:FireExceptUnreliable({playerA, playerB}, CFrame.new())</code></pre>
+
+        <h3>InvokeClient</h3>
+        <p><code>sync:InvokeClient(player: Player, ...any) -&gt; ...any</code> <span class="badge">Server</span></p>
+        <pre><code class="language-lua">local ok = sync:InvokeClient(player, "Ping")</code></pre>
+
+        <h3>Destroy</h3>
+        <p><code>sync:Destroy() -&gt; ()</code></p>
+        <p>Destroys server-created remotes (server) and cleans connections/tasks (all realms).</p>
+
+        <h2>Configuration</h2>
+
+        <h3>SetRateLimit</h3>
+        <p><code>sync:SetRateLimit(perSecondLimit: number) -&gt; Sync</code></p>
+        <pre><code class="language-lua">sync:SetRateLimit(15)</code></pre>
+
+        <h3>SetMode</h3>
+        <p><code>sync:SetMode(mode: string) -&gt; Sync</code></p>
+        <pre><code class="language-lua">sync:SetMode(Sync.Modes.Burst)</code></pre>
+
+        <h3>SetByteLimit</h3>
+        <p><code>sync:SetByteLimit(byteLimit: number) -&gt; Sync</code></p>
+        <pre><code class="language-lua">sync:SetByteLimit(1024)</code></pre>
+
+        <h2>Unreliable vs reliable</h2>
+        <ul>
+          <li><strong>Reliable</strong> (<code>RemoteEvent</code>): use for critical gameplay messages.</li>
+          <li><strong>Unreliable</strong> (<code>UnreliableRemoteEvent</code>): use for high-frequency state where drops are OK.</li>
+        </ul>
+      </article>
+
+      <aside class="toc panel">
+        <div class="toc-inner">
+          <h3>On this page</h3>
+          <nav class="toc" data-toc></nav>
+        </div>
+      </aside>
+    </main>
+
+    <div class="footer">
+      Style inspiration: <a href="https://sleitnick.github.io/RbxUtil/api/Net/" target="_blank" rel="noreferrer">RbxUtil Net</a>
+    </div>
+
+    <script src="../../assets/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
+  </body>
+</html>
+
