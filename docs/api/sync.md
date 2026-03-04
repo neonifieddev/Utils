@@ -193,16 +193,16 @@ Fires to one player (drops if rate-limited/byte-limited).
 sync:FireClient(player, "hello")
 ```
 
-### `FireExcept`
+### `FireAllClientsExcept`
 
 **Server**
 
-`sync:FireExcept(players: { Player }, ...any) -> ()`
+`sync:FireAllClientsExcept(players: { Player }, ...any) -> ()`
 
 Fires to all players except the given list.
 
 ```lua
-sync:FireExcept({playerA, playerB}, "everyone else")
+sync:FireAllClientsExcept({playerA, playerB}, "everyone else")
 ```
 
 ### `InvokeClient`
