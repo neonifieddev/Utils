@@ -7,13 +7,6 @@ Basic networking module for creating and handling static `RemoteEvent`s and `Rem
 
 > Style inspiration: RbxUtil `Net` docs ([link](https://sleitnick.github.io/RbxUtil/api/Net/)).
 
-> **Naming note:** This docs site uses Roblox-style names:
->
-> - `:Connect` → `:OnEvent`
-> - `:Fire` → `:FireServer`
->
-> (Server → client methods remain `:FireAllClients`, `:FireClient`, etc.)
-
 ## One shared remote folder (important)
 
 You only need **one copy of the Sync module** required by both server and client.
