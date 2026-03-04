@@ -17,7 +17,6 @@
         </a>
         <nav class="navlinks">
           <a href="../../">Intro</a>
-          <a href="https://sleitnick.github.io/RbxUtil/api/Net/" target="_blank" rel="noreferrer">RbxUtil Net</a>
         </nav>
       </div>
     </header>
@@ -42,14 +41,13 @@
         </p>
 
         <div class="callout">
-          <strong>Examples only:</strong> this page uses generic examples (no app-specific remote registries), inspired
-          by the structure of RbxUtil’s <a href="https://sleitnick.github.io/RbxUtil/api/Net/" target="_blank" rel="noreferrer">Net</a> docs.
+          <strong>Examples only:</strong> this page uses generic examples (no app-specific remote registries).
         </div>
 
         <h2>One shared remote folder</h2>
         <p>
-          You only need <strong>one copy</strong> of the Sync module required by both server and client. All endpoints share:
-          <code>ReplicatedStorage.Remotes</code>.
+          Define your endpoints in <strong>one shared “Remotes” module</strong> required by both server and client, so
+          endpoint names stay consistent. All endpoints share: <code>ReplicatedStorage.Remotes</code>.
         </p>
         <p>For each <code>Sync:Create("X")</code>:</p>
         <ul>
@@ -253,9 +251,7 @@ end)</code></pre>
       </aside>
     </main>
 
-    <div class="footer">
-      Style inspiration: <a href="https://sleitnick.github.io/RbxUtil/api/Net/" target="_blank" rel="noreferrer">RbxUtil Net</a>
-    </div>
+    <div class="footer"></div>
 
     <script src="../../assets/app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>

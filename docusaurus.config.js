@@ -51,11 +51,6 @@ const config = {
             position: "left",
             label: "Docs",
           },
-          {
-            href: "https://sleitnick.github.io/RbxUtil/api/Net/",
-            label: "Inspiration (RbxUtil Net)",
-            position: "right",
-          },
         ],
       },
       docs: {

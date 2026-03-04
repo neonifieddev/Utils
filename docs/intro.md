@@ -12,7 +12,9 @@ slug: /
 
 ## Single shared remote container (important)
 
-You only need **one copy of the Sync module** that both server and client `require()`.
+The important part is having **one shared “Remotes” module** (or endpoint registry) that both server and client `require()`, so endpoint names stay consistent.
+
+The `Sync` module itself must be placed somewhere both realms can `require()` (commonly `ReplicatedStorage.Packages.Sync`).
 
 - **Server** creates (if missing): `ReplicatedStorage.Remotes`
 - **Client** waits for: `ReplicatedStorage.Remotes`

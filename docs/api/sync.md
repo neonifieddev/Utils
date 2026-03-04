@@ -5,11 +5,14 @@ slug: /api/Sync
 
 Basic networking module for creating and handling static `RemoteEvent`s and `RemoteFunction`s (paired per endpoint name), with **rate limiting** and **payload byte limiting**.
 
-> Style inspiration: RbxUtil `Net` docs ([link](https://sleitnick.github.io/RbxUtil/api/Net/)).
-
 ## One shared remote folder (important)
 
-You only need **one copy of the Sync module** required by both server and client.
+To avoid mismatched endpoint names between server and client, define your endpoints in **one shared module** that both realms can `require()`.
+
+Typically:
+
+- Put that shared “Remotes” module somewhere both can access (e.g. `ReplicatedStorage.Shared.Remotes`).
+- Put the `Sync` module somewhere both can `require()` (commonly `ReplicatedStorage.Packages.Sync`).
 
 All endpoints share the same container:
 
