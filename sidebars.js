@@ -4,13 +4,14 @@ const sidebars = {
     "intro",
     {
       type: "category",
-      label: "Sync",
-      items: ["sync/intro", "sync/api"],
-    },
-    {
-      type: "category",
-      label: "Tween",
-      items: ["tween/intro", "tween/api"],
+      label: "Utils",
+      collapsed: false,
+      items: [
+        "sync/intro",
+        "sync/api",
+        "tween/intro",
+        "tween/api",
+      ],
     },
   ],
 };
