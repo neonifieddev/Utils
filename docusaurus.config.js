@@ -30,6 +30,7 @@ const config = {
           routeBasePath: "/",
           showLastUpdateTime: false,
           showLastUpdateAuthor: false,
+          remarkPlugins: [require("./remark-luau-to-lua")],
         },
         blog: false,
         theme: {

@@ -89,6 +89,12 @@ function setActiveSidebar() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Prism doesn't know "luau" by default; treat it as "lua" for highlighting.
+  for (const code of document.querySelectorAll("code.language-luau")) {
+    code.classList.remove("language-luau");
+    code.classList.add("language-lua");
+  }
+
   buildTOC();
   wireCopyButtons();
   setActiveSidebar();
