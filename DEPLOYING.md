@@ -12,8 +12,8 @@ Set these to match your repo:
 Example:
 
 ```js
-url: "https://neo.github.io",
-baseUrl: "/sync-docs/",
+url: "https://neonifieddev.github.io",
+baseUrl: "/Utils/",
 ```
 
 If you use a custom domain, set `baseUrl: "/"`.

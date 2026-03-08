@@ -10,7 +10,7 @@ const config = {
   favicon: "img/favicon.svg",
 
   url: "https://neonifieddev.github.io",
-  baseUrl: "/Sync/",
+  baseUrl: "/Utils/",
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
