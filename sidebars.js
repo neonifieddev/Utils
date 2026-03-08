@@ -5,7 +5,7 @@ const sidebars = {
     {
       type: "category",
       label: "API",
-      items: ["api/sync"],
+      items: ["api/sync", "api/tweenutil"],
     },
   ],
 };
