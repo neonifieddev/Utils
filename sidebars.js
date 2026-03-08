@@ -2,15 +2,8 @@
 const sidebars = {
   docs: [
     "intro",
-    {
-      type: "category",
-      label: "Utils",
-      collapsed: false,
-      items: [
-        "sync/api",
-        "tween/api",
-      ],
-    },
+    "sync/api",
+    "tween/api",
   ],
 };
 

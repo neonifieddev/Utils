@@ -1,5 +1,5 @@
 ---
-title: API
+title: Tween
 slug: /tween/api
 ---
 
