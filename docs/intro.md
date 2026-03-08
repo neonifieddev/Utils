@@ -8,10 +8,8 @@ This site documents **Neo's Utils** — a small collection of Roblox utilities.
 
 ## Utils
 
-- **Sync**: networking helper (events/functions, rate limiting, payload byte limiting)
-  - **API**: `/sync/api`
+- **[Sync](/sync/api)**: networking helper (events/functions, rate limiting, payload byte limiting)
 
-- **Tween**: tween helper (includes Model-only `Scale` + `Pivot` support)
-  - **API**: `/tween/api`
+- **[Tween](/tween/api)**: tween helper (includes Model-only `Scale` + `Pivot` support)
 
 
