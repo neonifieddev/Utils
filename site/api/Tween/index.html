@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Tween API | Neo's Utils</title>
+    <meta name="description" content="Tween API Documentation (Neo's Utils)" />
+    <link rel="stylesheet" href="../../assets/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="../../">
+          <span>Neo's Utils</span>
+          <span class="badge">API</span>
+        </a>
+        <nav class="navlinks">
+          <a href="../../">Intro</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar panel">
+        <div class="sidebar-inner" data-sidebar>
+          <h3>Docs</h3>
+          <div class="sideitem"><a href="../../">Intro</a></div>
+          <h3>API</h3>
+          <div class="sideitem"><a class="indent" href="../Sync/">Sync</a></div>
+          <div class="sideitem"><a class="indent" href="./">Tween</a></div>
+        </div>
+      </aside>
+
+      <article class="content panel" data-content>
+        <h1>Tween</h1>
+        <p class="subtitle">
+          Tween helper for building/controlling tweens from one data table, including Model-only extended properties:
+          <code>Scale</code> (<code>Model:ScaleTo</code>) and <code>Pivot</code> (<code>Model:PivotTo</code>).
+        </p>
+
+        <h2>Type: TweenData</h2>
+        <pre><code class="language-luau">export type TweenData = {
+	instance: Instance | Model | GuiObject,
+	properties: { [string]: any },
+	time: number,
+	easingStyle: Enum.EasingStyle,
+	easingDirection: Enum.EasingDirection,
+}</code></pre>
+
+        <h2>Extended properties (Model-only)</h2>
+        <ul>
+          <li>
+            <strong>Scale</strong>: tweens a temporary <code>NumberValue</code> and applies via
+            <code>Model:ScaleTo(value)</code>.
+          </li>
+          <li>
+            <strong>Pivot</strong>: tweens a temporary <code>CFrameValue</code> and applies via
+            <code>Model:PivotTo(cframe)</code>.
+          </li>
+        </ul>
+
+        <h2>Functions</h2>
+
+        <h3>New</h3>
+        <p><code>Tween.New(tweenData: TweenData) -&gt; Tween</code></p>
+
+        <h3>CreateAndPlay</h3>
+        <p><code>Tween.CreateAndPlay(tweenData: TweenData) -&gt; Tween</code></p>
+
+        <h2>Signal</h2>
+        <h3>completed</h3>
+        <p><code>tween.completed: Signal</code> fires when all internal tweens finish.</p>
+
+        <h2>Instance methods</h2>
+        <ul>
+          <li><code>:Play()</code></li>
+          <li><code>:Pause()</code></li>
+          <li><code>:Resume()</code></li>
+          <li><code>:Cancel()</code></li>
+          <li><code>:Restart()</code></li>
+          <li><code>:Destroy()</code></li>
+        </ul>
+
+        <h2>Example</h2>
+        <pre><code class="language-luau">local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Tween = require(ReplicatedStorage.Packages.Tween)
+
+local model = workspace:WaitForChild("Crate")
+
+Tween.CreateAndPlay({
+	instance = model,
+	properties = {
+		Pivot = CFrame.new(0, 10, 0),
+		Scale = 1.25,
+	},
+	time = 0.6,
+	easingStyle = Enum.EasingStyle.Sine,
+	easingDirection = Enum.EasingDirection.InOut,
+})</code></pre>
+      </article>
+
+      <aside class="toc panel">
+        <div class="toc-inner">
+          <h3>On this page</h3>
+          <nav class="toc" data-toc></nav>
+        </div>
+      </aside>
+    </main>
+
+    <div class="footer"></div>
+
+    <script src="../../assets/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-lua.min.js"></script>
+  </body>
+</html>
+
