@@ -7,9 +7,7 @@ const sidebars = {
       label: "Utils",
       collapsed: false,
       items: [
-        "sync/intro",
         "sync/api",
-        "tween/intro",
         "tween/api",
       ],
     },

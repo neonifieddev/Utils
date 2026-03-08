@@ -48,6 +48,9 @@ const config = {
           // Old routes -> new module routes
           { from: "/api/Sync", to: "/sync/api" },
           { from: "/api/Tween", to: "/tween/api" },
+          // Old module intro routes -> module API pages
+          { from: "/sync", to: "/sync/api" },
+          { from: "/tween", to: "/tween/api" },
         ],
       },
     ],
